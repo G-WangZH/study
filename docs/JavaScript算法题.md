@@ -213,7 +213,7 @@ function wideTraversal(node) {
 }
 ```
 深度优先遍历
-![Alt](../image/深度优先遍历.png#pic_center)
+<img src="../image/深度优先遍历.png" />
 ```javascript
 
 /**

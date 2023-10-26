@@ -1,50 +1,8 @@
-- [JavaScript常见手写代码题](#javascript常见手写代码题)
-  - [1、手动实现map方法（用友、猿辅导、字节）](#1手动实现map方法用友猿辅导字节)
-  - [2、手动实现reduce方法](#2手动实现reduce方法)
-  - [3、实现防抖函数](#3实现防抖函数)
-  - [4、实现节流函数](#4实现节流函数)
-  - [5、实现深拷贝函数（面试）](#5实现深拷贝函数面试)
-  - [实现new函数（面试）](#实现new函数面试)
-  - [事件总线 | 发布订阅模式（快手、滴滴）](#事件总线--发布订阅模式快手滴滴)
-  - [柯西化函数（知乎）](#柯西化函数知乎)
-  - [实现instanceof（虾皮）](#实现instanceof虾皮)
-  - [实现promise.all（美团）](#实现promiseall美团)
-      - [1) 核心思路](#1-核心思路)
-      - [2）实现代码](#2实现代码)
-  - [实现promise.race（58同城）](#实现promiserace58同城)
-  - [模拟实现 Promise.finally](#模拟实现-promisefinally)
-  - [实现\_.groupBy方法（蚂蚁）](#实现_groupby方法蚂蚁)
-  - [实现浏览器的缓存数据的存取（蚂蚁）](#实现浏览器的缓存数据的存取蚂蚁)
-  - [模拟浏览器限制最大并发请求数量（蚂蚁）](#模拟浏览器限制最大并发请求数量蚂蚁)
-  - [手写call、apply、bind](#手写callapplybind)
-      - [call 和 apply 的区别是什么，哪个性能更好一些](#call-和-apply-的区别是什么哪个性能更好一些)
-  - [手写promise（一般情况下不会考，因为太费时间）](#手写promise一般情况下不会考因为太费时间)
-  - [数组扁平化](#数组扁平化)
-  - [对象扁平化](#对象扁平化)
-  - [对象扁平化反转](#对象扁平化反转)
-  - [图片懒加载](#图片懒加载)
-  - [使用 setTimeout 实现 setInterval（待定）](#使用-settimeout-实现-setinterval待定)
-  - [实现 jsonp](#实现-jsonp)
-  - [实现prototype继承](#实现prototype继承)
-  - [实现indexOf](#实现indexof)
-    - [其他手写代码：](#其他手写代码)
-- [数据处理](#数据处理)
-  - [解析 URL Params 为对象（用友）](#解析-url-params-为对象用友)
-  - [](#)
-  - [](#-1)
-  - [](#-2)
-  - [](#-3)
-  - [](#-4)
-  - [](#-5)
-  - [](#-6)
-  - [](#-7)
-- [场景应用](#场景应用)
-- [相关参考链接](#相关参考链接)
 
+<img src="../image/手写代码面试题.png"  width="800" />
 
-![alt](../image/手写代码面试题.png)
 # JavaScript常见手写代码题
-## 1、手动实现map方法（用友、猿辅导、字节）
+## 手动实现map方法（用友、猿辅导、字节）
 ```javascript
 const obj = {
     name: 'ha',
@@ -116,7 +74,7 @@ arr.myMap(function(item,index,arr){
 ```
 [参考链接](https://blog.csdn.net/qq_40713392/article/details/105929437)<br />[参考链接](https://www.jianshu.com/p/ed37f8944e4b)
 
-## 2、手动实现reduce方法
+## 手动实现reduce方法
 ```javascript
 // 实现
 Array.prototype.myReduce = function(fn, initValue) {
@@ -144,8 +102,21 @@ Array.prototype.myReduce = function(fn, initValue) {
 ```
 [reduce手写方法链接](https://mdnice.com/writing/64a6579ab8964a8d9e5a030519cd4b9e)
 
+## 实现数组的filter方法
+```
+Array.prototype._filter = function(fn) {
+    if (typeof fn !== "function") {
+        throw Error('参数必须是一个函数');
+    }
+    const res = [];
+    for (let i = 0, len = this.length; i < len; i++) {
+        fn(this[i]) && res.push(this[i]);
+    }
+    return res;
+}
+```
 
-## 3、实现防抖函数
+## 实现防抖函数
 ```javascript
 // 实现
 //参数func：需要防抖的函数
@@ -170,7 +141,7 @@ const debounceTask = debounce(task, 1000)
 window.addEventListener('scroll', debounceTask)
 ```
 
-## 4、实现节流函数
+## 实现节流函数
 ```javascript
 // 节流函数
 function throttle(fn, delay) {
@@ -194,7 +165,7 @@ function print(e) {
 input.addEventListener('input', throttle(print, 1000));
 ```
 
-## 5、实现深拷贝函数（面试）
+## 实现深拷贝函数（面试）
 ```javascript
 function deepCopy(obj, cache = new WeakMap()) {
   // 数据类型校验
@@ -514,13 +485,14 @@ me.printIntroduction();
 [instanceof mdn介绍](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/instanceof)
 
 ## 实现promise.all（美团）
-#### 1) 核心思路
+**1) 核心思路**
 - 接收一个 Promise 实例的数组或具有 Iterator 接口的对象作为参数
 - 这个方法返回一个新的 promise 对象，
 - 遍历传入的参数，用Promise.resolve()将参数"包一层"，使其变成一个promise对象
 - 参数所有回调成功才是成功，返回值数组与参数顺序一致
 - 参数数组其中一个失败，则触发失败状态，第一个触发失败的 Promise 错误信息作为 Promise.all 的错误信息。
-#### 2）实现代码
+  
+**2）实现代码**
 一般来说，Promise.all 用来处理多个并发请求，也是为了页面数据构造的方便，将一个页面所用到的在不同接口的数据一起请求过来，不过，如果其中一个接口失败了，多个请求也就失败了，页面可能啥也出不来，这就看当前页面的耦合程度了
 ```javascript
 function promiseAll(promises) {
@@ -589,56 +561,9 @@ Promise.prototype.finally = function (callback) {
 [链接](https://github.com/Advanced-Frontend/Daily-Interview-Question/issues/109)
 
 
-## 实现_.groupBy方法（蚂蚁）
-
-/**
-请你编写一段可应用于所有数组的代码，使任何数组调用 array. groupBy(fn) 方法时，它返回对该数组 分组后 的结果。
-数组 分组 是一个对象，其中的每个键都是 fn(arr[i]) 的输出的一个数组，该数组中含有原数组中具有该键的所有项。
-提供的回调函数 fn 将接受数组中的项并返回一个字符串类型的键。
-每个值列表的顺序应该与元素在数组中出现的顺序相同。任何顺序的键都是可以接受的。
-请在不使用 lodash 的 _.groupBy 函数的前提下解决这个问题。
-例如：输入：
-array = [{"id":"1"}, {"id":"1"}, {"id":"2"}], 
-fn = function (item) { 
-   return item.id; 
-}
-输出：
-{ 
-"1": [{"id": "1"}, {"id": "1"}],   
-"2": [{"id": "2"}] 
-}
- */
 
 ```javascript
-pending
-```
 
-
-## 实现浏览器的缓存数据的存取（蚂蚁）
-
-编写一个类，它允许获取和设置键-值对，并且每个键都有一个过期时间。类似浏览器的缓存数据的存取，存入的数据可设置过期时间
-该类有三个公共方法:
-- set(key, value, duration) ：接收参数为整型键 key 、整型值 value 和以毫秒为单位的持续时间 duration 。一旦 duration 到期后，这个键就无法访问。如果相同的未过期键已经存在，该方法将返回 true ，否则返回 false 。如果该键已经存在，则它的值和持续时间都应该被覆盖。
-- get(key) ：如果存在一个未过期的键，它应该返回这个键相关的值。否则返回 -1 。
-- count() ：返回未过期键的总数。
-```javascript
-pending
-```
-
-
-
-
-## 模拟浏览器限制最大并发请求数量（蚂蚁）
-
-用js实现一个请求方法，模拟浏览器限制最大并发请求数量，最多并发6个。
-由于每个请求执行时间不确定，因此前6个请求应该会立即被发送，而后面的请求会等待前面的请求完成后再发送，比如我先一起发调用了4次请求，等待300ms后又一起发送了4个请求，那真正发出的请求只有前6个，后面2个要排队，等有空闲时请求发出去，并当请求返回数据后能正确返回给调用方。
-
-实现控制并发请求个数
-js封装一个请求函数，可以5个并发请求，等其中一个结束后面的补上，直到结束。<br />[链接](https://blog.51cto.com/u_15685951/5577417)<br />[参考链接](https://blog.csdn.net/cdy_1/article/details/132277626)<br />[链接](https://juejin.cn/post/7203648441720225852)
-
-
-```javascript
-pending
 ```
 ## 手写call、apply、bind
 `call()、apply()、bind()`这两个方法的作用可以简单归纳为改变`this`指向，从而让我们的`this`指向不在是谁调用了函数就指向谁。
@@ -661,6 +586,14 @@ console.log(foo.getX.call(obj));    //81
 console.log(foo.getX.apply(obj));   //81
 ```
 参考链接：<br />[✅手写 实现call、apply和bind方法 超详细！！！](https://blog.csdn.net/weixin_45844049/article/details/118026630)<br />[✅手写bind](https://vue3js.cn/interview/JavaScript/bind_call_apply.html#%E4%B8%89%E3%80%81%E5%AE%9E%E7%8E%B0)<br />[视频讲解](https://www.bilibili.com/video/BV1m54y1q7hc/?spm_id_from=333.788&vd_source=6223af80f0d3af90c7943b1db211f730)
+**call 函数的实现步骤：**
+- 判断调用对象是否为函数，即使我们是定义在函数的原型上的，但是可能出现使用 call 等方式调用的情况。
+- 判断传入上下文对象是否存在，如果不存在，则设置为 window 。
+- 处理传入的参数，截取第一个参数后的所有参数。
+- 将函数作为上下文对象的一个属性。
+- 使用上下文对象来调用这个方法，并保存返回结果。
+- 删除刚才新增的属性。
+- 返回结果。
 ```javascript
 // call方法实现
 Function.prototype.myCall = function(context) {
@@ -671,8 +604,7 @@ Function.prototype.myCall = function(context) {
     // 判断call方法是否有传值，如果是null或者是undefined，指向全局变量window
     context = context || window;
     // 获取除了this指向对象以外的参数, 空数组slice后返回的仍然是空数组
-    let args = [...arguments].slice(1);
-    let result = null;
+    let args = [...arguments].slice(1), result = null;
     // 获取调用call的函数，用this可以获取
     context.fn = this; // this指向的是使用call方法的函数(Function的实例，即下面测试例子中的bar方法)
     result = context.fn(...args); //隐式绑定,当前函数的this指向了context.
@@ -698,17 +630,31 @@ bar.myCall(null, 'teacher', 25);
 // undefined
 // teacher 25
 ```
-#### call 和 apply 的区别是什么，哪个性能更好一些
+> **call 和 apply 的区别是什么，哪个性能更好一些?**
 call 比 apply 的性能好, 我的理解是内部少了一次将 apply 第二个参数解构的操作
+
+apply 函数的实现步骤：
+1. 判断调用对象是否为函数，即使我们是定义在函数的原型上的，但是可能出现使用 call 等方式调用的情况。
+2. 判断传入上下文对象是否存在，如果不存在，则设置为 window 。
+3. 将函数作为上下文对象的一个属性。
+4. 判断参数值是否传入
+5. 使用上下文对象来调用这个方法，并保存返回结果。
+6. 删除刚才新增的属性
+7. 返回结果
+
 ```javascript
 // apply的实现
 Function.prototype.myApply = function (context) {
-    if (!context) {
-        //context为null或者是undefined时,设置默认值
-        context = typeof window === 'undefined' ? global : window;
+    // 判断调用对象是否为函数
+    if (typeof this !== "function") {
+        throw new TypeError("Error");
     }
-    context.fn = this;
     let result = null;
+    // 判断 context 是否存在，如果未传入则为 window
+    context = context || window;
+    // 将函数设为对象的方法
+    context.fn = this;
+
     if(arguments[1]) {
         // 第二个参数有值的话
         result = context.fn(...arguments[1]);
@@ -736,8 +682,33 @@ bar.myApply(null, ['teacher', 25]);
 // Chirs teacher 25
 ```
 
+bind 函数的实现步骤：
+1. 判断调用对象是否为函数，即使我们是定义在函数的原型上的，但是可能出现使用 call 等方式调用的情况。
+2. 保存当前函数的引用，获取其余传入参数值。
+3. 创建一个函数返回
+4. 函数内部使用 apply 来绑定函数调用，需要判断函数作为构造函数的情况，这个时候需要传入当前函数的 this 给 apply 调用，其余情况都传入指定的上下文对象。
+
 ```javascript
-// bind方法
+// bind 函数实现
+Function.prototype.myBind = function(context) {
+    // 判断调用对象是否为函数
+    if (typeof this !== "function") {
+        throw new TypeError("Error");
+    }
+    // 获取参数
+    var args = [...arguments].slice(1),
+        fn = this;
+    return function Fn() {
+        // 根据调用方式，传入不同绑定值
+        return fn.apply(
+            this instanceof Fn ? this : context,
+            args.concat(...arguments)
+        );
+    };
+};
+
+
+// 另一种写法：bind方法
 Function.prototype.myBind = function (context) {
     // 判断调用对象是否为函数
     if (typeof this !== "function") {
@@ -928,7 +899,135 @@ console.log(objectFlat(source)); // {a.b.c: 1, a.b.d: 2, a.e: 3, f.g: 2}
 [图片懒加载，手写见上面链接](https://www.bilibili.com/video/BV1FU4y157Li/?spm_id_from=333.788&vd_source=6223af80f0d3af90c7943b1db211f730)<br />原理：图片的加载是由src引起的，当对`src赋值时，浏览器就会请求图片资源` 。根据这个原理，我们使用HTML5 的`data-src` 属性来储存图片的路径，在需要加载图片的时候，将`data-src`中图片的路径赋值给src，这样就实现了图片的按需加载，即懒加载。
 
 **预加载：**<br />预加载指的是将所需的资源提前请求加载到本地，这样后面在需要用到时就直接从缓存取资源。 通过预加载能够减少用户的等待时间，提高用户的体验。预加载的最常用的方式是使用 js 中的`image`对象，通过为`image`对象来设置 src 属性，来实现图片的预加载。<br />`预加载则会增加服务器前端压力。`
-## 使用 setTimeout 实现 setInterval（待定）
+
+
+# 数据处理
+## 解析 URL Params 为对象（用友）
+```javascript
+let url = 'http://www.domain.com/?user=anonymous&id=123&id=456&city=%E5%8C%97%E4%BA%AC&enabled';
+parseParam(url)
+/* 结果
+{ user: 'anonymous',
+  id: [ 123, 456 ], // 重复出现的 key 要组装成数组，能被转成数字的就转成数字类型
+  city: '北京', // 中文需解码
+  enabled: true, // 未指定值得 key 约定为 true
+}
+*/
+
+// 方法1：利用new URLSearchParams方法
+// 常用new URLSearchParams(location.search)来获取url的参数
+function parseParam(url) {
+    let list = new URLSearchParams(url.split('?')[1]);
+    let res = {};
+    for (let [k, v] of list.entries()) {
+        v = v ? v : true;
+        if(res[k]) {
+            res[k] = [res[k]];
+            res[k].push(v);
+        } else {
+            res[k] = v;
+        }
+    }
+    return res;
+}
+
+// 方法2：正则表达式
+function parseParam(url) {
+  const paramsStr = /.+\?(.+)$/.exec(url)[1]; // 将 ? 后面的字符串取出来
+  const paramsArr = paramsStr.split('&'); // 将字符串以 & 分割后存到数组中
+  let paramsObj = {};
+  // 将 params 存到对象中
+  paramsArr.forEach(param => {
+    if (/=/.test(param)) { // 处理有 value 的参数
+      let [key, val] = param.split('='); // 分割 key 和 value
+      val = decodeURIComponent(val); // 解码
+      val = /^\d+$/.test(val) ? parseFloat(val) : val; // 判断是否转为数字
+      if (paramsObj.hasOwnProperty(key)) { // 如果对象有 key，则添加一个值
+        paramsObj[key] = [].concat(paramsObj[key], val);
+      } else { // 如果对象没有这个 key，创建 key 并设置值
+        paramsObj[key] = val;
+      }
+    } else { // 处理没有 value 的参数
+      paramsObj[param] = true;
+    }
+  })
+  return paramsObj;
+}
+```
+### 其他手写代码：
+
+## 手写虚拟 dom 转换成真实 dom（字节）
+```javascript
+
+```
+
+## 手写 assign，要考虑全面，包括 symbol 也要考虑在内（猿辅导）
+```javascript
+
+```
+
+## 手写 ES6 的模板字符串（百度）
+```javascript
+
+```
+
+## 用 promise 封装实现 readfile 和 writefile 的同步请求（百度）
+```javascript
+
+```
+
+# 场景应用
+## 实现_.groupBy方法（蚂蚁）
+
+/**
+请你编写一段可应用于所有数组的代码，使任何数组调用 array. groupBy(fn) 方法时，它返回对该数组 分组后 的结果。
+数组 分组 是一个对象，其中的每个键都是 fn(arr[i]) 的输出的一个数组，该数组中含有原数组中具有该键的所有项。
+提供的回调函数 fn 将接受数组中的项并返回一个字符串类型的键。
+每个值列表的顺序应该与元素在数组中出现的顺序相同。任何顺序的键都是可以接受的。
+请在不使用 lodash 的 _.groupBy 函数的前提下解决这个问题。
+例如：输入：
+array = [{"id":"1"}, {"id":"1"}, {"id":"2"}], 
+fn = function (item) { 
+   return item.id; 
+}
+输出：
+{ 
+"1": [{"id": "1"}, {"id": "1"}],   
+"2": [{"id": "2"}] 
+}
+ */
+
+```javascript
+略
+```
+
+
+## 实现浏览器的缓存数据的存取（蚂蚁）
+
+编写一个类，它允许获取和设置键-值对，并且每个键都有一个过期时间。类似浏览器的缓存数据的存取，存入的数据可设置过期时间
+该类有三个公共方法:
+- set(key, value, duration) ：接收参数为整型键 key 、整型值 value 和以毫秒为单位的持续时间 duration 。一旦 duration 到期后，这个键就无法访问。如果相同的未过期键已经存在，该方法将返回 true ，否则返回 false 。如果该键已经存在，则它的值和持续时间都应该被覆盖。
+- get(key) ：如果存在一个未过期的键，它应该返回这个键相关的值。否则返回 -1 。
+- count() ：返回未过期键的总数。
+```javascript
+略
+```
+
+
+
+
+## 模拟浏览器限制最大并发请求数量（蚂蚁）
+
+用js实现一个请求方法，模拟浏览器限制最大并发请求数量，最多并发6个。
+由于每个请求执行时间不确定，因此前6个请求应该会立即被发送，而后面的请求会等待前面的请求完成后再发送，比如我先一起发调用了4次请求，等待300ms后又一起发送了4个请求，那真正发出的请求只有前6个，后面2个要排队，等有空闲时请求发出去，并当请求返回数据后能正确返回给调用方。
+
+实现控制并发请求个数
+js封装一个请求函数，可以5个并发请求，等其中一个结束后面的补上，直到结束。<br />[链接](https://blog.51cto.com/u_15685951/5577417)<br />[参考链接](https://blog.csdn.net/cdy_1/article/details/132277626)<br />[链接](https://juejin.cn/post/7203648441720225852)
+
+## 使用 setTimeout 实现 setInterval
+setInterval 的作用是每隔一段指定时间执行一个函数，但是这个执行不是真的到了时间立即执行，它真正的作用是每隔一段时间将事件加入事件队列中去，只有当当前的执行栈为空的时候，才能去从事件队列中取出事件执行。所以可能会出现这样的情况，就是当前执行栈执行的时间很长，导致事件队列里边积累多个定时器加入的事件，当执行栈结束的时候，这些事件会依次执行，因此就不能到间隔一段时间执行的效果。
+针对 setInterval 的这个缺点，我们可以使用 setTimeout 递归调用来模拟 setInterval，这样我们就确保了只有一个事件结束了，我们才会触发下一个定时器事件，这样解决了 setInterval 的问题。
+实现思路是使用递归函数，不断地去执行 setTimeout 从而达到<font color="#c7244e"> setInterval </font>的效果
 ```javascript
 // 使用 setTimeout 实现 setInterval
 function mySetInterval(fn, timeout) {
@@ -949,32 +1048,10 @@ function mySetInterval(fn, timeout) {
   return timer;
 }
 
-
-// 方法2
-function mySetInterval() {
-    mySetInterval.timer = setTimeout(() => {
-        arguments[0]()
-        mySetInterval(...arguments)
-    }, arguments[1])
-}
-
-mySetInterval.clear = function() {
-    clearTimeout(mySetInterval.timer)
-}
-
-mySetInterval(() => {
-    console.log(11111)
-}, 1000)
-
-setTimeout(() => {
-    // 5s 后清理
-    mySetInterval.clear()
-}, 5000)
 ```
 
 ## 实现 jsonp 
 ```javascript
-// 实现 jsonp 
 // 动态的加载js文件
 function addScript(src) {
   const script = document.createElement('script');
@@ -1032,110 +1109,9 @@ const find = (S, T) => {
 // 待定
 const find = (S,T) => S.indexOf(T)
 ```
-### 其他手写代码：
-1、手写获取数组的重复元素，要求尽可能用多种方法实现（小米）
-3、用 promise 封装实现 readfile 和 writefile 的同步请求（百度）<br />
-4、 手写 Promise（字节、百度、深信服、小红书）
-9、手写虚拟 dom 转换成真实 dom（字节）
-10、手写 assign，要考虑全面，包括 symbol 也要考虑在内（猿辅导）
-11、手写 ES6 的模板字符串（百度）
-
-# 数据处理
-## 解析 URL Params 为对象（用友）
-```javascript
-let url = 'http://www.domain.com/?user=anonymous&id=123&id=456&city=%E5%8C%97%E4%BA%AC&enabled';
-parseParam(url)
-/* 结果
-{ user: 'anonymous',
-  id: [ 123, 456 ], // 重复出现的 key 要组装成数组，能被转成数字的就转成数字类型
-  city: '北京', // 中文需解码
-  enabled: true, // 未指定值得 key 约定为 true
-}
-*/
-
-// 方法1：利用new URLSearchParams方法
-// 常用new URLSearchParams(location.search)来获取url的参数
-function parseParam(url) {
-    let list = new URLSearchParams(url.split('?')[1]);
-    let res = {};
-    for (let [k, v] of list.entries()) {
-        v = v ? v : true;
-        if(res[k]) {
-            res[k] = [res[k]];
-            res[k].push(v);
-        } else {
-            res[k] = v;
-        }
-    }
-    return res;
-}
-
-// 方法2：正则表达式
-function parseParam(url) {
-  const paramsStr = /.+\?(.+)$/.exec(url)[1]; // 将 ? 后面的字符串取出来
-  const paramsArr = paramsStr.split('&'); // 将字符串以 & 分割后存到数组中
-  let paramsObj = {};
-  // 将 params 存到对象中
-  paramsArr.forEach(param => {
-    if (/=/.test(param)) { // 处理有 value 的参数
-      let [key, val] = param.split('='); // 分割 key 和 value
-      val = decodeURIComponent(val); // 解码
-      val = /^\d+$/.test(val) ? parseFloat(val) : val; // 判断是否转为数字
-      if (paramsObj.hasOwnProperty(key)) { // 如果对象有 key，则添加一个值
-        paramsObj[key] = [].concat(paramsObj[key], val);
-      } else { // 如果对象没有这个 key，创建 key 并设置值
-        paramsObj[key] = val;
-      }
-    } else { // 处理没有 value 的参数
-      paramsObj[param] = true;
-    }
-  })
-  return paramsObj;
-}
-```
-
-## 
-```javascript
-
-```
-
-## 
-```javascript
-
-```
-
-## 
-```javascript
-
-```
-
-## 
-```javascript
-
-```
-
-## 
-```javascript
-
-```
-
-
-## 
-```javascript
-
-```
-
-## 
-```javascript
-
-```
-
-## 
-```javascript
-
-```
-# 场景应用
+## 循环打印红黄绿
 
 
 # 相关参考链接
 [前端面试出场率奇高的18个手写代码](https://www.jianshu.com/p/810fd449a552)
+[前端面试题之手写代码篇](https://www.yuque.com/cuggz/interview/pkg93q#OUtq1)
